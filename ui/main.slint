@@ -1,0 +1,44 @@
+import {
+    Button,
+    VerticalBox,
+    HorizontalBox,
+    LineEdit,
+} from "std-widgets.slint";
+
+export struct ToDoListItem { text: string, done: bool }
+
+export component ToDoList inherits Window {
+    width: 400px;
+    height: 500px;
+
+    in-out property <[ToDoListItem]> tasks;
+    in-out property <string> new-task-name;
+    callback task-inserted();
+
+    VerticalBox {
+        // top row: input + button side by side
+        HorizontalBox {
+            input := LineEdit {
+                text: new-task-name;
+                edited => { new-task-name = self.text; }
+                accepted => {
+                    task-inserted();
+                }
+                height: 30px;
+                width: 70%;
+            }
+
+            Button {
+                text: "Add Task";
+                clicked => { task-inserted(); }
+                height: 30px;
+            }
+        }
+
+        // list grows to fill remaining space
+        for task in tasks: Text {
+            text: task.text;
+            height: 30px;
+        }
+    }
+}
